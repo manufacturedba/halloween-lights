@@ -3,3 +3,6 @@ secrets.py
 
 # OSX
 .DS_Store
+
+# Virtualenv
+.env
