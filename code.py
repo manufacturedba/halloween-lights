@@ -5,21 +5,30 @@
 
 import time
 import board
+import terminalio
 from adafruit_matrixportal.matrixportal import MatrixPortal
 
 
 FRAME_DURATION = 5
 FRAMES = (
-    "bmps/bats.bmp",
-    "bmps/jack.bmp",
+    "bmps/kitty.bmp",
     "bmps/green-ghost.bmp",
+    "you have \nno real \nfriends",
+    "bmps/roy.bmp",
+    "bmps/bats.bmp",
+    "your\nrecycling\ngoes to \na \nlandfill",
+    "bmps/jack.bmp",
+    "bmps/roynose.bmp",
+    "gas\nprices\nwill\nnever\ncome\ndown",
     "bmps/spooky.bmp",
-    "bmps/scary.bmp",
     "bmps/bats2.bmp",
+    "we will\nrent\nforever",
     "bmps/ghost.bmp",
 )
 
 SYNCHRONIZE_CLOCK = True
+
+FONT = "/ib8x8u.bdf"
 
 # --- Display setup ---
 matrixportal = MatrixPortal(
@@ -27,8 +36,15 @@ matrixportal = MatrixPortal(
     debug=True,
     height=64,
     width=64,
-    serpentine=True, 
+    serpentine=True,
     tile_rows=2)
+
+matrixportal.add_text(
+    text_font=FONT,
+    text_position=((matrixportal.graphics.display.width // 12) - 4,
+                   (matrixportal.graphics.display.height // 2) - 1),
+    text_color=0x800000
+)
 
 current_frame = None
 
@@ -47,16 +63,18 @@ def set_next_frame():
 
     # Check if Picture or Text
     print(FRAMES[current_frame])
+    matrixportal.set_text("")
+
     if FRAMES[current_frame][-4:] == ".bmp":
-        matrixportal.set_background(FRAMES[current_frame], position=(0, 16))
-        matrixportal.set_text("")
+        matrixportal.set_background(FRAMES[current_frame], position=(0, 0))
+    else:
+        matrixportal.set_background(None, position=(0, 16))
+        matrixportal.set_text(FRAMES[current_frame])
 
 
 # Simulate the delay in case fetching time is fast
 set_next_frame()
 start_time = time.monotonic()
-if SYNCHRONIZE_CLOCK:
-    matrixportal.get_local_time()
 
 while time.monotonic() < start_time + FRAME_DURATION:
     pass
